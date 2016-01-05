@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/santee/DataContractSerializer.ts/issues"
   },
-  "homepage": "https://github.com/santee/DataContractSerializer.ts#readme"
+  "homepage": "https://github.com/santee/DataContractSerializer.ts#readme",
+  "dependencies": {
+    "reflect-metadata": "^0.1.2"
+  }
 }
