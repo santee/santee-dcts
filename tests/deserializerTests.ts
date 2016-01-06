@@ -31,16 +31,61 @@ describe("deserialize(obj, constructorFunction)", () => {
             public bar: number;
             
             @dataMember("goo")
-            public gaz: number;
-        }
+            public trueValue: boolean;
+            
+            @dataMember()
+            public falseValue: boolean;
+        };
         
-        var source = { foo: "test", bar: 5, goo: 10 };
+        var source = { foo: "test", bar: 5, goo: true, falseValue: false };
         
         var result = deserialize(source, A);
         
         expect(result.foo).to.equal("test");
         expect(result.bar).to.equal(5);
-        expect(result.gaz).to.equal(10);
+        expect(result.trueValue).to.be.true;
+        expect(result.falseValue).to.be.false;
+    });
+    
+    it("throws exception if primitive type is not the same as in target object", () => {
+        class A {
+            @dataMember()
+            public foo: string;
+        };
+        
+        var source = { foo: 5 };
+        
+        expect(() => deserialize(source, A)).to.throw(Error);
+    });
+    
+    it("assigns undefined if property does not exist and no @required decorator specified", () => {
+        class A {
+            @dataMember()
+            public foo: string;
+        };
+        
+        var source = { bar: 5 };
+        
+        expect(deserialize(source, A).foo).to.be.undefined;
+    });
+    
+    it("allows nulls to be assigned to primitive types", () => {
+        class A {
+            @dataMember()
+            public foo: string;
+        };
+        
+        var source = { foo: <any>null };
+        
+        var result = deserialize(source, A);
+        expect(result.foo).to.equal(null);
+    });
+    
+    it("deserializes simple object fields", () => {
+        class A {
+            
+        };
+        
     });
 });
 
