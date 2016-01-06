@@ -2,11 +2,12 @@
 
 import chai = require('chai');
 import {dataMember} from '../index';
+import {dataMemberListMetadataKey, dataMemberMetadataKey} from '../src/dataMemberDecorator';
 
 var expect = chai.expect;
 
 describe('@dataMember()', () => {
-    it(`creates 'sas:validation:data-member-list' metadata with all properties listed`, () => {
+    it(`creates '${dataMemberListMetadataKey}' metadata with all properties listed`, () => {
         class A {
             @dataMember()
             public foo: string;
@@ -16,33 +17,37 @@ describe('@dataMember()', () => {
 
             @dataMember()
             public gaz: number;
-        }
+        };
 
-        var metadata = Reflect.getMetadata('sas:validation:data-member-list', A.prototype);
+        var metadata = Reflect.getMetadata(dataMemberListMetadataKey, A.prototype);
 
         expect(metadata).to.deep.equal(['foo', 'bar', 'gaz']);
     });
 
-    it(`creates 'sas:validation:data-member' metadata with property name as a value`, () => {
+    it(`creates '${dataMemberMetadataKey}' metadata with property name as a value`, () => {
         class A {
             @dataMember()
             public foo: string;
-        }
-        
-        var metadata = Reflect.getMetadata('sas:validation:data-member', A.prototype, "foo");
+        };
+
+        var metadata = Reflect.getMetadata(dataMemberMetadataKey, A.prototype, "foo");
         expect(metadata).to.be.equal("foo");
     });
 });
 
 
 describe(`@dataMember('fieldName')`, () => {
-    it(`creates 'sas:validation:data-member' metadata with fieldName as a value`, () => {
+    it(`creates '${dataMemberMetadataKey}' metadata with fieldName as a value`, () => {
         class A {
             @dataMember('bar')
             public foo: string;
-        }
-        
-        var metadata = Reflect.getMetadata('sas:validation:data-member', A.prototype, "foo");
+        };
+
+        var metadata = Reflect.getMetadata(dataMemberMetadataKey, A.prototype, "foo");
         expect(metadata).to.be.equal("bar");
     });
 })
+
+
+describe(`PropertiesMapper`, () => {
+});

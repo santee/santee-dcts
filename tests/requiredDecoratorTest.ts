@@ -2,11 +2,12 @@
 
 import chai = require('chai');
 import {required} from '../index';
+import {requiredMetadataKey} from '../src/requiredDecorator';
 
 var expect = chai.expect;
 
 describe("@required()", () => {
-    it(`creates 'sas:validations:required' metadata 
+    it(`creates '${requiredMetadataKey}' metadata 
         on constructor function prototype with key equals 
         to field name and value equals to true
         when being applied to a field`,
@@ -17,12 +18,12 @@ describe("@required()", () => {
                 public foo: string;
             };
             
-            var metadata = Reflect.getMetadata("sas:validations:required", A.prototype, "foo");
+            var metadata = Reflect.getMetadata(requiredMetadataKey, A.prototype, "foo");
             
             expect(metadata).to.be.true;
         });
         
-    it(`creates 'sas:validations:required' metadata on 
+    it(`creates '${requiredMetadataKey}' metadata on 
         constructor function prototype when being applied to a property`,
         () => {
             
@@ -39,7 +40,7 @@ describe("@required()", () => {
                 }
             }
             
-            var metadata = Reflect.getMetadata("sas:validations:required", A.prototype, "foo");
+            var metadata = Reflect.getMetadata(requiredMetadataKey, A.prototype, "foo");
             
             expect(metadata).to.be.true;
         }

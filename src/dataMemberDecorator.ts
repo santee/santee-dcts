@@ -5,7 +5,6 @@ export var dataMemberMetadataKey = 'sas:validation:data-member';
 
 export function dataMemberDecorator(fieldName?: string) : PropertyDecorator {
     return (target, propertyKey) => {
-        
         //Replace dataMemberList
         var dataMembers: (string|symbol)[] = Reflect.getMetadata(dataMemberListMetadataKey, target) || [];
         dataMembers = [...dataMembers, propertyKey];
