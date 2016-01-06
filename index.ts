@@ -1,3 +1,5 @@
 import 'reflect-metadata';
 
-import {requiredDecorator} from './src/requiredDecorator';
+import {requiredDecorator, helloWorld} from './src/requiredDecorator';
+
+helloWorld();

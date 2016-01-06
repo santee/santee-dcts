@@ -2,8 +2,9 @@ var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 var ts = require('gulp-typescript');
 
-gulp.task('test', function() {
-	
+gulp.task('test', ['typescript'], function() {
+	return gulp.src('tests/**/*.js', {read: false})
+        .pipe(mocha());
 });
 
 
