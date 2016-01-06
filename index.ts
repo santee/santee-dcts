@@ -1,5 +1,7 @@
+'use strict';
+
 import 'reflect-metadata';
 
-import {requiredDecorator, helloWorld} from './src/requiredDecorator';
+import {requiredDecorator} from './src/requiredDecorator';
 
-helloWorld();
+export {requiredDecorator as required};

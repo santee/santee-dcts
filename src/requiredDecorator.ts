@@ -1,11 +1,9 @@
 'use strict';
 
-export function requiredDecorator(): PropertyDecorator {
-	return (target, propertyKey) => {
-		
-	}
-}
+export var requiredMetadataKey = "sas:validations:required";
 
-export function helloWorld(){
-	console.log('hello world');
+export function requiredDecorator(): PropertyDecorator {
+    return (target, propertyKey) => {
+        Reflect.defineMetadata(requiredMetadataKey, true, target, propertyKey);
+    }
 }
