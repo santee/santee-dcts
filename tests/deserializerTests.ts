@@ -58,6 +58,21 @@ describe("deserialize(obj, constructorFunction)", () => {
         expect(() => deserialize(source, A)).to.throw(Error);
     });
     
+    it("throws exception if primitive type passed while target type is constructor function", () => {
+        
+        class B {
+        }
+        
+        class A {
+            @dataMember()
+            public foo: B;
+        };
+        
+        var source = { foo: 5 };
+        
+        expect(() => deserialize(source, A)).to.throw(Error);
+    });
+    
     it("assigns undefined if property does not exist and no @required decorator specified", () => {
         class A {
             @dataMember()
@@ -119,6 +134,50 @@ describe("deserialize(obj, constructorFunction)", () => {
         expect(result.obj).is.deep.equal(source.obj);
     });
     
+    it("deserializes explicitly class-typed fields if plain javascript object passed", () => {
+        class B {
+            @dataMember()
+            public foo: string;
+            
+            @dataMember()
+            public boo: number;
+        }
+        
+        class A {
+            @dataMember()
+            public obj: B;
+        };
+        
+        var source = { obj: { foo: "a", boo: 10 } };
+        var result = deserialize(source, A);
+        
+        expect(result.obj).not.equal(source.obj);
+        expect(result.obj).is.deep.equal(source.obj);
+        
+        expect(result.obj).to.be.instanceof(B);
+    });
+    
+    it("calls constructor for a explicitly class-typed fields", () => {
+        var constructorWasCalledTimes = 0;
+        
+        class B {
+            constructor() {
+                constructorWasCalledTimes++;
+            }
+        }
+        
+        class A {
+            @dataMember()
+            public obj: B;
+        };
+        
+        var source = { obj: { foo: "a", boo: 10 } };
+        var result = deserialize(source, A);
+        
+        expect(constructorWasCalledTimes).to.equal(1);
+        expect(result.obj).to.be.instanceof(B);
+    });
+    
     it("deserializes interface-typed fields if plain javascript object passed by deep clonning it", () => {
         interface IObj {
             val: string;
@@ -154,6 +213,25 @@ describe("deserialize(obj, constructorFunction)", () => {
         expect(result.numbersArray).is.deep.equal(source.numbersArray);
     });
     
+    it("throws error if object passed for array field", () => {
+        class A {
+            @dataMember()
+            public objArray: any[];
+        };
+        
+        var source = { objArray: {foo: "bar"} };
+        expect(() => deserialize(source, A)).to.throw(Error);
+    });
+    
+    it("throws error if primitive object passed for array field", () => {
+        class A {
+            @dataMember()
+            public objArray: any[];
+        };
+        
+        var source = { objArray: 5 };
+        expect(() => deserialize(source, A)).to.throw(Error);
+    });
 });
 
 
@@ -169,4 +247,4 @@ describe("deserialize(obj, MyClass)", () => {
         
         expect(result).to.be.instanceof(A);
     });
-})
+});
