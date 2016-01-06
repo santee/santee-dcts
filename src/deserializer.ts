@@ -1,3 +1,27 @@
 'use strict';
 
-import {} from './requiredDecorator';
+import {requiredMetadataKey} from './requiredDecorator';
+
+export class PropertiesCollector {
+    
+    constructor(fn: Function){
+        
+    }
+    
+    collect() {
+        
+    }
+}
+
+
+export function deserialize<T>(source: Object, constructorFunction: new() => T){
+    if (!constructorFunction) {
+        throw new Error("constructorFunction must be specified")
+    }
+    
+    if (source instanceof Object) {
+        
+    } else {
+        throw new Error("source object must be an object")
+    }
+}
