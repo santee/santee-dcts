@@ -20,7 +20,9 @@ export function deserialize<T>(source: Object, constructorFunction: new() => T){
     }
     
     if (source instanceof Object) {
+        var target = new constructorFunction();
         
+        return target;
     } else {
         throw new Error("source object must be an object")
     }

@@ -5,9 +5,9 @@ import {required} from '../index';
 
 var expect = chai.expect;
 
-describe("requiredDecorator", function() {
-    it(`is adding 'sas:validations:required' metadata 
-        to constructor function prototype with key equals 
+describe("@required()", () => {
+    it(`creates 'sas:validations:required' metadata 
+        on constructor function prototype with key equals 
         to field name and value equals to true
         when being applied to a field`,
         () => {
@@ -22,7 +22,7 @@ describe("requiredDecorator", function() {
             expect(metadata).to.be.true;
         });
         
-    it(`is adding 'sas:validations:required' metadata to 
+    it(`creates 'sas:validations:required' metadata on 
         constructor function prototype when being applied to a property`,
         () => {
             
