@@ -20,15 +20,15 @@ export function deserialize<T extends Object>(source: Object, constructorFunctio
     }
 }
 
-export function deserializeArray<T extends Object>(source: Object[], constructorFunction: new () => T){
+export function deserializeArray<T extends Object>(source: Object[], constructorFunction: new () => T) {
     if (!constructorFunction) {
         throw new Error("constructorFunction must be specified");
     }
-    
+
     if (!Array.isArray(source)) {
         throw new Error("source object must be an array");
     }
-    
+
     return source.map((x) => deserialize(x, constructorFunction));
 }
 
@@ -59,46 +59,35 @@ export function assignPropertyValues<T extends Object>(source: Object, target: T
             //function -> Function
             //interface -> Object
             //Otherwise -> Object
-            
-            let typesAreCompatible = true;
-            
+
             if (targetType === Object && (typeof sourceValue !== "object")) {
-                var warningMessage = `Deserialization: Primitive type '${sourceValue}'' passed to ` +
-                                     `the object for the property '${targetPropertyName}'. ` + 
-                                     `It is impossible to determine whether object type is 'any'` + 
-                                     ` or 'Object' or 'interface'. Try to avoid 'any' types`;
-                console.warn(warningMessage);
+                console.warn(formatAnyTypeWarningMessage(sourceValue, targetPropertyName));
             }
-            
-            var targetTypeIsObjectFunction = targetType instanceof Object 
-                && targetType !== Number 
+
+            var targetTypeIsObjectFunction = targetType instanceof Object
+                && targetType !== Number
                 && targetType !== Object
                 && targetType !== String
                 && targetType !== Boolean
                 && targetType !== Array;
-            
-            if (targetType === Number && (typeof sourceValue !== "number") && !(sourceValue instanceof Number)) {
-                typesAreCompatible = false;
-            } else if (targetType === Boolean && (typeof sourceValue !== "boolean") && !(sourceValue instanceof Boolean)) {
-                typesAreCompatible = false;
-            } else if (targetType === String && (typeof sourceValue !== "string") && !(sourceValue instanceof String)) {
-                typesAreCompatible = false;
-            } else if (targetType === Function && (typeof sourceValue !== "function")) {
-                typesAreCompatible = false;
-            } else if (targetTypeIsObjectFunction && !(sourceValue instanceof Object)) {
-                typesAreCompatible = false;
-            } else if (targetType === Array && !(Array.isArray(sourceValue))) {
-                typesAreCompatible = false;
-            }
-            
+
+            let typesAreCompatible = true;
+
+            typesAreCompatible = typesAreCompatible && !(targetType === Number && (typeof sourceValue !== "number") && !(sourceValue instanceof Number));
+            typesAreCompatible = typesAreCompatible && !(targetType === Boolean && (typeof sourceValue !== "boolean") && !(sourceValue instanceof Boolean));
+            typesAreCompatible = typesAreCompatible && !(targetType === String && (typeof sourceValue !== "string") && !(sourceValue instanceof String));
+            typesAreCompatible = typesAreCompatible && !(targetType === Function && (typeof sourceValue !== "function"));
+            typesAreCompatible = typesAreCompatible && !(targetTypeIsObjectFunction && !(sourceValue instanceof Object));
+            typesAreCompatible = typesAreCompatible && !(targetType === Array && !(Array.isArray(sourceValue)));
+
             if (!typesAreCompatible) {
                 throw new Error(`Types are incompatible. Source types is '${typeof sourceValue}', expected is ${targetType}`);
             }
-            
+
             if (sourceValue instanceof Object) {
-               assignmentFunction = deepCopyAssignment;
+                assignmentFunction = deepCopyAssignment;
             }
-            
+
             if (targetTypeIsObjectFunction && targetType !== Object) {
                 assignmentFunction = deserializeAssignment(targetType);
             }
@@ -108,17 +97,26 @@ export function assignPropertyValues<T extends Object>(source: Object, target: T
     }
 }
 
-function simpleAssignment(target: Object, targetPropertyName: (string|symbol), sourceValue: any) {
+function simpleAssignment(target: Object, targetPropertyName: (string | symbol), sourceValue: any) {
     (<any>target)[targetPropertyName] = sourceValue;
 }
 
-function deepCopyAssignment(target: Object, targetPropertyName: (string|symbol), sourceValue: any) {
+function deepCopyAssignment(target: Object, targetPropertyName: (string | symbol), sourceValue: any) {
     (<any>target)[targetPropertyName] = (JSON.parse(JSON.stringify(sourceValue)));
 }
 
-function deserializeAssignment(constructorFunction: new() => any){
-    return function (target: Object, targetPropertyName: (string|symbol), sourceValue: any){
+function deserializeAssignment(constructorFunction: new () => any) {
+    return function(target: Object, targetPropertyName: (string | symbol), sourceValue: any) {
         var deserializedValue: any = deserialize(sourceValue, constructorFunction);
         (<any>target)[targetPropertyName] = deserializedValue;
     }
+}
+
+function formatAnyTypeWarningMessage(sourceValue: any, targetPropertyName: (string|symbol)) {
+    var warningMessage = `Deserialization: Primitive type '${sourceValue}'' passed to ` +
+        `the object for the property '${targetPropertyName}'. ` +
+        `It is impossible to determine whether object type is 'any'` +
+        ` or 'Object' or 'interface'. Try to avoid 'any' types`;
+
+    return warningMessage;
 }
