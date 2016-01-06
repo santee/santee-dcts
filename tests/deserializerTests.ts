@@ -1,7 +1,7 @@
 'use strict';
 
 import chai = require('chai');
-import {deserialize, dataMember} from '../index';
+import {deserialize, dataMember, deserializeArray} from '../index';
 
 var expect = chai.expect;
 
@@ -238,13 +238,34 @@ describe("deserialize(obj, constructorFunction)", () => {
 describe("deserialize(obj, MyClass)", () => {
     it("returns new instance of MyClass", () => {
         class A {
+            @dataMember()
             public bar: string;
-        }
+        };
         
         var obj = { bar: "space bar" };
         
         var result = deserialize(obj, A);
         
         expect(result).to.be.instanceof(A);
+    });
+});
+
+
+describe("deserializeArray(objArray, MyClass)", () => {
+    it ("returns array of MyClass objects", () => {
+        class A {
+            @dataMember()
+            public bar: string;
+        };
+        
+        var array = [ { bar: "space bar" }, { bar: "xxxx"} ];
+        
+        var result = deserializeArray(array, A);
+        
+        expect(result.length).to.equal(2);
+        expect(result[0]).to.be.instanceof(A);
+        expect(result[0].bar).to.equal("space bar");
+        expect(result[1]).to.be.instanceof(A);
+        expect(result[1].bar).to.equal("xxxx");
     });
 });
