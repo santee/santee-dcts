@@ -24,11 +24,13 @@ export function assignPropertyValues<T>(source: Object, target: T) {
     var mapper = new PropertiesMapper(target);
     var allProperties = mapper.getAllProperties();
     for (var targetPropertyName of allProperties) {
-        var sourcePropertyName = mapper.getSourcePropertyName(targetPropertyName);
+        let sourcePropertyName = mapper.getSourcePropertyName(targetPropertyName);
 
-        var sourceValue = (<any>source)[sourcePropertyName];
+        let sourceValue = (<any>source)[sourcePropertyName];
 
-        var targetType = mapper.getPropertyType(targetPropertyName);
+        let assignmentFunction = simpleAssignment;
+
+        let targetType = mapper.getPropertyType(targetPropertyName);
         if (targetType && sourceValue !== null && sourceValue !== undefined) {
             //check on types compatibility
             //Basic types serialization rules for design:types
@@ -45,9 +47,7 @@ export function assignPropertyValues<T>(source: Object, target: T) {
             //interface -> Object
             //Otherwise -> Object
             
-            var isObject = sourceValue instanceof Object;
-            
-            var typesAreCompatible = true;
+            let typesAreCompatible = true;
             
             if (targetType === Number && (typeof sourceValue !== "number") && !(sourceValue instanceof Number)) {
                 typesAreCompatible = false;
@@ -68,12 +68,20 @@ export function assignPropertyValues<T>(source: Object, target: T) {
             if (!typesAreCompatible) {
                 throw new Error(`Types are incompatible. Source types is '${typeof sourceValue}', expected is ${targetType}`);
             }
-            
-            //if (targetType === Object)
-
-            console.log(targetType, sourceValue);
+        }
+        
+        if (sourceValue instanceof Object) {
+            assignmentFunction = deepCopyAssignment;
         }
 
-        (<any>target)[targetPropertyName] = sourceValue;
+        assignmentFunction(target, targetPropertyName, sourceValue);
     }
+}
+
+function simpleAssignment(target: Object, targetPropertyName: (string|symbol), sourceValue: any) {
+    (<any>target)[targetPropertyName] = sourceValue;
+}
+
+function deepCopyAssignment(target: Object, targetPropertyName: (string|symbol), sourceValue: any) {
+    (<any>target)[targetPropertyName] = (JSON.parse(JSON.stringify(sourceValue)));
 }

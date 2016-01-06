@@ -81,12 +81,79 @@ describe("deserialize(obj, constructorFunction)", () => {
         expect(result.foo).to.equal(null);
     });
     
-    it("deserializes simple object fields", () => {
+    it("deserializes 'any' fields if plain javascript object passed by deep clonning it", () => {
         class A {
-            
+            @dataMember()
+            public obj: any;
         };
         
+        var source = { obj: { val: "value" } };
+        var result = deserialize(source, A);
+        
+        expect(result.obj).not.equal(source.obj);
+        expect(result.obj).is.deep.equal(source.obj);
     });
+    
+    it("deserializes 'any' fields if primitive object passed by assigning it", () => {
+        class A {
+            @dataMember()
+            public obj: any;
+        };
+        
+        var source = { obj: 5 };
+        var result = deserialize(source, A);
+        
+        expect(result.obj).to.equal(5);
+    });
+    
+    it("deserializes 'Object' fields if plain javascript object passed by deep clonning it", () => {
+        class A {
+            @dataMember()
+            public obj: Object;
+        };
+        
+        var source = { obj: { val: "value" } };
+        var result = deserialize(source, A);
+        
+        expect(result.obj).not.equal(source.obj);
+        expect(result.obj).is.deep.equal(source.obj);
+    });
+    
+    it("deserializes interface-typed fields if plain javascript object passed by deep clonning it", () => {
+        interface IObj {
+            val: string;
+        }
+        
+        class A {
+            @dataMember()
+            public obj: IObj;
+        };
+        
+        var source = { obj: { val: "value" } };
+        var result = deserialize(source, A);
+        
+        expect(result.obj).not.equal(source.obj);
+        expect(result.obj).is.deep.equal(source.obj);
+    });
+    
+    it("deserializes arrays by deep clonning it", () => {
+        class A {
+            @dataMember()
+            public objArray: any[];
+            
+            @dataMember()
+            public numbersArray: number[];
+        };
+        
+        var source = { objArray: ["aa", {}, 30], numbersArray: [20, 30, 40] };
+        var result = deserialize(source, A);
+        
+        expect(result.objArray).not.equal(source.objArray);
+        expect(result.objArray).is.deep.equal(source.objArray);
+        expect(result.numbersArray).not.equal(source.numbersArray);
+        expect(result.numbersArray).is.deep.equal(source.numbersArray);
+    });
+    
 });
 
 
