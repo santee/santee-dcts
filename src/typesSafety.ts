@@ -33,20 +33,12 @@ export class TypeSafetyConstraint implements Constraint {
             console.warn(this.formatAnyTypeWarningMessage(sourceValue, this.propertyName));
         }
 
-        var targetTypeIsObjectFunction = targetType instanceof Object
-            && targetType !== Number
-            && targetType !== Object
-            && targetType !== String
-            && targetType !== Boolean
-            && targetType !== Array;
-
         let typesAreCompatible = true;
 
         typesAreCompatible = typesAreCompatible && !(targetType === Number && (typeof sourceValue !== "number") && !(sourceValue instanceof Number));
         typesAreCompatible = typesAreCompatible && !(targetType === Boolean && (typeof sourceValue !== "boolean") && !(sourceValue instanceof Boolean));
         typesAreCompatible = typesAreCompatible && !(targetType === String && (typeof sourceValue !== "string") && !(sourceValue instanceof String));
         typesAreCompatible = typesAreCompatible && !(targetType === Function && (typeof sourceValue !== "function"));
-        typesAreCompatible = typesAreCompatible && !(targetTypeIsObjectFunction && !(sourceValue instanceof Object));
         typesAreCompatible = typesAreCompatible && !(targetType === Array && !(Array.isArray(sourceValue)));
 
         if (!typesAreCompatible) {
