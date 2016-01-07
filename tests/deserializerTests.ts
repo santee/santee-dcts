@@ -269,3 +269,106 @@ describe("deserializeArray(objArray, MyClass)", () => {
         expect(result[1].bar).to.equal("xxxx");
     });
 });
+
+
+describe("deserialize(obj, MyClass) with no design-time metadata", () => {
+    it ("assigns primitive types from source object", () => {
+        class A {
+            @dataMember()
+            public foo: string;
+            
+            @dataMember()
+            public bar: number;
+            
+            @dataMember("goo")
+            public trueValue: boolean;
+            
+            @dataMember()
+            public falseValue: boolean;
+        };
+        
+        Reflect.deleteMetadata("design:type", A.prototype, "foo");
+        Reflect.deleteMetadata("design:type", A.prototype, "bar");
+        Reflect.deleteMetadata("design:type", A.prototype, "trueValue");
+        Reflect.deleteMetadata("design:type", A.prototype, "falseValue");
+        
+        var source = { foo: "test", bar: 5, goo: true, falseValue: false };
+        
+        var result = deserialize(source, A);
+        
+        expect(result.foo).to.equal("test");
+        expect(result.bar).to.equal(5);
+        expect(result.trueValue).to.be.true;
+        expect(result.falseValue).to.be.false;
+    });
+    
+    it ("doesn't check for type safety for primitive types", () => {
+        class A {
+            @dataMember()
+            public foo: string;
+        }
+        
+        Reflect.deleteMetadata("design:type", A.prototype, "foo");
+        
+        var source = { foo: 5 };
+        
+        var result = deserialize(source, A);
+        
+        expect(result.foo).to.equal(5);
+    });
+    
+    it ("deep copies objects", () => {
+        
+        class A {
+            @dataMember()
+            public foo: Object;
+        }
+        
+        Reflect.deleteMetadata("design:type", A.prototype, "foo");
+        
+        var source = { foo: {bar: "test"} };
+        
+        var result = deserialize(source, A);
+        
+        expect(result.foo).not.to.equal(source.foo);
+        expect(result.foo).to.deep.equal(source.foo);
+    });
+    
+    it ("deep copies not primitive types", () => {
+        class B {
+            @dataMember()
+            public gaz: string;
+        }
+        
+        class A {
+            @dataMember()
+            public foo: B;
+        }
+        
+        Reflect.deleteMetadata("design:type", A.prototype, "foo");
+        Reflect.deleteMetadata("design:type", B.prototype, "gaz");
+        
+        var source = { foo: { gaz: "t"} };
+        
+        var result = deserialize(source, A);
+        
+        expect(result.foo).not.to.equal(source.foo);
+        expect(result.foo).to.deep.equal(source.foo);
+    });
+    
+    it ("deep copies arrays", () => {
+        class A {
+            @dataMember()
+            public foo: number[];
+        }
+        
+        Reflect.deleteMetadata("design:type", A.prototype, "foo");
+        
+        var source = { foo: [5, 10, 20] };
+        
+        var result = deserialize(source, A);
+        
+        expect(result.foo).not.to.equal(source.foo);
+        expect(result.foo).to.deep.equal(source.foo);
+    });
+});
