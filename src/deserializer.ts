@@ -38,36 +38,33 @@ export function assignPropertyValues<T extends Object>(source: Object, target: T
     var metadataAccessor = new MetadataAccessor(target);
     var allProperties = metadataAccessor.getAllProperties();
     for (let targetPropertyName of allProperties) {
-        
+
         let targetType = metadataAccessor.getPropertyType(targetPropertyName);
         let constraints = [new RequiredMetadataConstraint(target, targetPropertyName), new TypeSafetyConstraint(targetPropertyName, targetType)];
-        
+
         let sourcePropertyName = metadataAccessor.getSourcePropertyName(targetPropertyName);
 
         let sourceValue = (<any>source)[sourcePropertyName];
 
         let assignmentFunction = simpleAssignment;
-        
+
         for (let constraint of constraints) {
             constraint.check(sourceValue);
         }
-        
-        if (targetType && sourceValue !== null && sourceValue !== undefined) {
 
-            var targetTypeIsObjectFunction = targetType instanceof Object
-                && targetType !== Number
-                && targetType !== Object
-                && targetType !== String
-                && targetType !== Boolean
-                && targetType !== Array;
+        var targetTypeIsObjectFunction = targetType instanceof Object
+            && targetType !== Number
+            && targetType !== Object
+            && targetType !== String
+            && targetType !== Boolean
+            && targetType !== Array;
 
-            if (sourceValue instanceof Object) {
-                assignmentFunction = deepCopyAssignment;
-            }
+        if (sourceValue instanceof Object) {
+            assignmentFunction = deepCopyAssignment;
+        }
 
-            if (targetTypeIsObjectFunction && targetType !== Object) {
-                assignmentFunction = deserializeAssignment(targetType);
-            }
+        if (targetTypeIsObjectFunction && targetType !== Object) {
+            assignmentFunction = deserializeAssignment(targetType);
         }
 
         assignmentFunction(target, targetPropertyName, sourceValue);
