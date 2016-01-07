@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 var ts = require('gulp-typescript');
+var tslint = require("gulp-tslint");
 
 gulp.task('test', ['typescript'], function() {
 	return gulp.src('tests/**/*.js', {read: false})
@@ -9,7 +10,7 @@ gulp.task('test', ['typescript'], function() {
 
 
 var tsProject = ts.createProject('./tsconfig.json');
-gulp.task('typescript', function () {
+gulp.task('typescript', ['tslint'], function () {
     var tsResult = tsProject
         .src()
         .pipe(ts(tsProject));
@@ -19,6 +20,12 @@ gulp.task('typescript', function () {
         .pipe(gulp.dest('.'));
 });
 
+gulp.task('tslint', function() {
+    return gulp.src(["src/**.ts", "tests/**.ts", "index.ts"])
+        .pipe(tslint())
+        .pipe(tslint.report("verbose"))
+});
+
 gulp.task('watch', ['typescript'], function() {
-    gulp.watch('**/*.ts', ['typescript']);
+    return gulp.watch('**/*.ts', ['typescript']);
 });

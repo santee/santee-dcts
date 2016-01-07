@@ -16,7 +16,7 @@ export class PropertiesMapper<T extends Object> {
     }
     
     getSourcePropertyName(targetPropertyName: (string|symbol)) {
-        return Reflect.getMetadata(dataMemberMetadataKey, this.objectPrototype, targetPropertyName)
+        return Reflect.getMetadata(dataMemberMetadataKey, this.objectPrototype, targetPropertyName);
     }
     
     getPropertyType(targetPropertyName: (string|symbol)) {

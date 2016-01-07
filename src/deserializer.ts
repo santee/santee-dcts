@@ -109,7 +109,7 @@ function deserializeAssignment(constructorFunction: new () => any) {
     return function(target: Object, targetPropertyName: (string | symbol), sourceValue: any) {
         var deserializedValue: any = deserialize(sourceValue, constructorFunction);
         (<any>target)[targetPropertyName] = deserializedValue;
-    }
+    };
 }
 
 function formatAnyTypeWarningMessage(sourceValue: any, targetPropertyName: (string|symbol)) {

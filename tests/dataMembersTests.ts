@@ -46,7 +46,7 @@ describe(`@dataMember('fieldName')`, () => {
         var metadata = Reflect.getMetadata(dataMemberMetadataKey, A.prototype, "foo");
         expect(metadata).to.be.equal("bar");
     });
-})
+});
 
 
 describe(`PropertiesMapper`, () => {

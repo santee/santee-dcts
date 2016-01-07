@@ -8,11 +8,11 @@ export function dataMemberDecorator(fieldName?: string) : PropertyDecorator {
         //Replace dataMemberList
         var dataMembers: (string|symbol)[] = Reflect.getMetadata(dataMemberListMetadataKey, target) || [];
         dataMembers = [...dataMembers, propertyKey];
-        
+
         Reflect.defineMetadata(dataMemberListMetadataKey, dataMembers, target);
-        
+
         var metadataValue = fieldName || propertyKey;
-        
+
         Reflect.defineMetadata(dataMemberMetadataKey, metadataValue, target, propertyKey);
     };
 }
