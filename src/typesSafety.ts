@@ -10,46 +10,47 @@ export class TypeSafetyConstraint implements Constraint {
     check(sourceValue: any) {
         var targetType = this.targetType;
 
-        if (targetType && sourceValue !== null && sourceValue !== undefined) {
+        if (!targetType || sourceValue === null && sourceValue === undefined) {
+            return;
+        }
         
-            //check on types compatibility
-            //Basic types serialization rules for design:types
-            //number -> Number
-            //string -> String
-            //boolean -> Boolean
-            //any -> Object
-            //void -> undefined
-            //Array -> Array
-            //Tuple -> Array
-            //class -> Class constructor
-            //enum -> Number
-            //function -> Function
-            //interface -> Object
-            //Otherwise -> Object
+        //check on types compatibility
+        //Basic types serialization rules for design:types
+        //number -> Number
+        //string -> String
+        //boolean -> Boolean
+        //any -> Object
+        //void -> undefined
+        //Array -> Array
+        //Tuple -> Array
+        //class -> Class constructor
+        //enum -> Number
+        //function -> Function
+        //interface -> Object
+        //Otherwise -> Object
 
-            if (targetType === Object && (typeof sourceValue !== "object")) {
-                console.warn(this.formatAnyTypeWarningMessage(sourceValue, this.propertyName));
-            }
+        if (targetType === Object && (typeof sourceValue !== "object")) {
+            console.warn(this.formatAnyTypeWarningMessage(sourceValue, this.propertyName));
+        }
 
-            var targetTypeIsObjectFunction = targetType instanceof Object
-                && targetType !== Number
-                && targetType !== Object
-                && targetType !== String
-                && targetType !== Boolean
-                && targetType !== Array;
+        var targetTypeIsObjectFunction = targetType instanceof Object
+            && targetType !== Number
+            && targetType !== Object
+            && targetType !== String
+            && targetType !== Boolean
+            && targetType !== Array;
 
-            let typesAreCompatible = true;
+        let typesAreCompatible = true;
 
-            typesAreCompatible = typesAreCompatible && !(targetType === Number && (typeof sourceValue !== "number") && !(sourceValue instanceof Number));
-            typesAreCompatible = typesAreCompatible && !(targetType === Boolean && (typeof sourceValue !== "boolean") && !(sourceValue instanceof Boolean));
-            typesAreCompatible = typesAreCompatible && !(targetType === String && (typeof sourceValue !== "string") && !(sourceValue instanceof String));
-            typesAreCompatible = typesAreCompatible && !(targetType === Function && (typeof sourceValue !== "function"));
-            typesAreCompatible = typesAreCompatible && !(targetTypeIsObjectFunction && !(sourceValue instanceof Object));
-            typesAreCompatible = typesAreCompatible && !(targetType === Array && !(Array.isArray(sourceValue)));
+        typesAreCompatible = typesAreCompatible && !(targetType === Number && (typeof sourceValue !== "number") && !(sourceValue instanceof Number));
+        typesAreCompatible = typesAreCompatible && !(targetType === Boolean && (typeof sourceValue !== "boolean") && !(sourceValue instanceof Boolean));
+        typesAreCompatible = typesAreCompatible && !(targetType === String && (typeof sourceValue !== "string") && !(sourceValue instanceof String));
+        typesAreCompatible = typesAreCompatible && !(targetType === Function && (typeof sourceValue !== "function"));
+        typesAreCompatible = typesAreCompatible && !(targetTypeIsObjectFunction && !(sourceValue instanceof Object));
+        typesAreCompatible = typesAreCompatible && !(targetType === Array && !(Array.isArray(sourceValue)));
 
-            if (!typesAreCompatible) {
-                throw new Error(`Types are incompatible. Source types is '${typeof sourceValue}', expected is ${targetType}`);
-            }
+        if (!typesAreCompatible) {
+            throw new Error(`Types are incompatible. Source types is '${typeof sourceValue}', expected is ${targetType}`);
         }
     }
 
