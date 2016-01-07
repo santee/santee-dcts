@@ -2,7 +2,7 @@
 
 import {RequiredMetadataConstraint} from './requiredDecorator';
 
-import {PropertiesMapper} from './propertiesMapper';
+import {MetadataAccessor} from './common';
 
 export function deserialize<T extends Object>(source: Object, constructorFunction: new () => T) {
     if (!constructorFunction) {
@@ -34,19 +34,19 @@ export function deserializeArray<T extends Object>(source: Object[], constructor
 
 export function assignPropertyValues<T extends Object>(source: Object, target: T) {
 
-    var mapper = new PropertiesMapper(target);
-    var allProperties = mapper.getAllProperties();
+    var metadataAccessor = new MetadataAccessor(target);
+    var allProperties = metadataAccessor.getAllProperties();
     for (let targetPropertyName of allProperties) {
         
         let constraints = [new RequiredMetadataConstraint(target, targetPropertyName)];
         
-        let sourcePropertyName = mapper.getSourcePropertyName(targetPropertyName);
+        let sourcePropertyName = metadataAccessor.getSourcePropertyName(targetPropertyName);
 
         let sourceValue = (<any>source)[sourcePropertyName];
 
         let assignmentFunction = simpleAssignment;
 
-        let targetType = mapper.getPropertyType(targetPropertyName);
+        let targetType = metadataAccessor.getPropertyType(targetPropertyName);
         
         for (let constraint of constraints) {
             constraint.check(sourceValue);

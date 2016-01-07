@@ -16,3 +16,7 @@ export function dataMemberDecorator(fieldName?: string) : PropertyDecorator {
         Reflect.defineMetadata(dataMemberMetadataKey, metadataValue, target, propertyKey);
     };
 }
+
+export class TypeSafetyConstraint {
+    
+}

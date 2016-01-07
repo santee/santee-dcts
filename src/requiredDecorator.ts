@@ -1,5 +1,7 @@
 'use strict';
 
+import {Constraint} from './common';
+
 export var requiredMetadataKey = "sas:validations:required";
 
 export interface RequiredDecoratorParameters {
@@ -15,7 +17,7 @@ export function requiredDecorator(params?: RequiredDecoratorParameters): Propert
     };
 }
 
-export class RequiredMetadataConstraint {
+export class RequiredMetadataConstraint implements Constraint {
     constructor(private obj: any, private propertyName: (string | symbol)) {
     }
 
