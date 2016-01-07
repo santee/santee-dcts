@@ -1,6 +1,6 @@
 'use strict';
 
-import {requiredMetadataKey} from './requiredDecorator';
+import {RequiredMetadataConstraint} from './requiredDecorator';
 
 import {PropertiesMapper} from './propertiesMapper';
 
@@ -36,7 +36,10 @@ export function assignPropertyValues<T extends Object>(source: Object, target: T
 
     var mapper = new PropertiesMapper(target);
     var allProperties = mapper.getAllProperties();
-    for (var targetPropertyName of allProperties) {
+    for (let targetPropertyName of allProperties) {
+        
+        let constraints = [new RequiredMetadataConstraint(target, targetPropertyName)];
+        
         let sourcePropertyName = mapper.getSourcePropertyName(targetPropertyName);
 
         let sourceValue = (<any>source)[sourcePropertyName];
@@ -44,6 +47,11 @@ export function assignPropertyValues<T extends Object>(source: Object, target: T
         let assignmentFunction = simpleAssignment;
 
         let targetType = mapper.getPropertyType(targetPropertyName);
+        
+        for (let constraint of constraints) {
+            constraint.check(sourceValue);
+        }
+        
         if (targetType && sourceValue !== null && sourceValue !== undefined) {
             //check on types compatibility
             //Basic types serialization rules for design:types
