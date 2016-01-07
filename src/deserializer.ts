@@ -1,6 +1,7 @@
 'use strict';
 
 import {RequiredMetadataConstraint} from './requiredDecorator';
+import {TypeSafetyConstraint} from './typesSafety';
 
 import {MetadataAccessor} from './common';
 
@@ -38,39 +39,20 @@ export function assignPropertyValues<T extends Object>(source: Object, target: T
     var allProperties = metadataAccessor.getAllProperties();
     for (let targetPropertyName of allProperties) {
         
-        let constraints = [new RequiredMetadataConstraint(target, targetPropertyName)];
+        let targetType = metadataAccessor.getPropertyType(targetPropertyName);
+        let constraints = [new RequiredMetadataConstraint(target, targetPropertyName), new TypeSafetyConstraint(targetPropertyName, targetType)];
         
         let sourcePropertyName = metadataAccessor.getSourcePropertyName(targetPropertyName);
 
         let sourceValue = (<any>source)[sourcePropertyName];
 
         let assignmentFunction = simpleAssignment;
-
-        let targetType = metadataAccessor.getPropertyType(targetPropertyName);
         
         for (let constraint of constraints) {
             constraint.check(sourceValue);
         }
         
         if (targetType && sourceValue !== null && sourceValue !== undefined) {
-            //check on types compatibility
-            //Basic types serialization rules for design:types
-            //number -> Number
-            //string -> String
-            //boolean -> Boolean
-            //any -> Object
-            //void -> undefined
-            //Array -> Array
-            //Tuple -> Array
-            //class -> Class constructor
-            //enum -> Number
-            //function -> Function
-            //interface -> Object
-            //Otherwise -> Object
-
-            if (targetType === Object && (typeof sourceValue !== "object")) {
-                console.warn(formatAnyTypeWarningMessage(sourceValue, targetPropertyName));
-            }
 
             var targetTypeIsObjectFunction = targetType instanceof Object
                 && targetType !== Number
@@ -78,19 +60,6 @@ export function assignPropertyValues<T extends Object>(source: Object, target: T
                 && targetType !== String
                 && targetType !== Boolean
                 && targetType !== Array;
-
-            let typesAreCompatible = true;
-
-            typesAreCompatible = typesAreCompatible && !(targetType === Number && (typeof sourceValue !== "number") && !(sourceValue instanceof Number));
-            typesAreCompatible = typesAreCompatible && !(targetType === Boolean && (typeof sourceValue !== "boolean") && !(sourceValue instanceof Boolean));
-            typesAreCompatible = typesAreCompatible && !(targetType === String && (typeof sourceValue !== "string") && !(sourceValue instanceof String));
-            typesAreCompatible = typesAreCompatible && !(targetType === Function && (typeof sourceValue !== "function"));
-            typesAreCompatible = typesAreCompatible && !(targetTypeIsObjectFunction && !(sourceValue instanceof Object));
-            typesAreCompatible = typesAreCompatible && !(targetType === Array && !(Array.isArray(sourceValue)));
-
-            if (!typesAreCompatible) {
-                throw new Error(`Types are incompatible. Source types is '${typeof sourceValue}', expected is ${targetType}`);
-            }
 
             if (sourceValue instanceof Object) {
                 assignmentFunction = deepCopyAssignment;
@@ -118,13 +87,4 @@ function deserializeAssignment(constructorFunction: new () => any) {
         var deserializedValue: any = deserialize(sourceValue, constructorFunction);
         (<any>target)[targetPropertyName] = deserializedValue;
     };
-}
-
-function formatAnyTypeWarningMessage(sourceValue: any, targetPropertyName: (string|symbol)) {
-    var warningMessage = `Deserialization: Primitive type '${sourceValue}'' passed to ` +
-        `the object for the property '${targetPropertyName}'. ` +
-        `It is impossible to determine whether object type is 'any'` +
-        ` or 'Object' or 'interface'. Try to avoid 'any' types`;
-
-    return warningMessage;
 }
