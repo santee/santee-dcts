@@ -3,7 +3,8 @@
 import {RequiredMetadataConstraint} from './requiredDecorator';
 import {TypeSafetyConstraint} from './typesSafety';
 
-import {MetadataAccessor} from './common';
+import {isPrimitiveTypeConstructor} from './common';
+import {MetadataAccessor} from './metadataAccessor';
 
 export function deserialize<T extends Object>(source: Object, constructorFunction: new () => T) {
     if (!constructorFunction) {
@@ -52,19 +53,21 @@ export function assignPropertyValues<T extends Object>(source: Object, target: T
             constraint.check(sourceValue);
         }
 
-        var targetTypeIsObjectFunction = targetType instanceof Object
-            && targetType !== Number
-            && targetType !== Object
-            && targetType !== String
-            && targetType !== Boolean
-            && targetType !== Array;
+        let targetTypeIsPrimitiveTypeConstructor = isPrimitiveTypeConstructor(targetType);
 
         if (sourceValue instanceof Object) {
             assignmentFunction = deepCopyAssignment;
         }
 
-        if (targetTypeIsObjectFunction && targetType !== Object) {
+        if (!targetTypeIsPrimitiveTypeConstructor && targetType !== Object) {
             assignmentFunction = deserializeAssignment(targetType);
+        }
+        
+        if (sourceValue instanceof Array) {
+            var typedArrayType = metadataAccessor.tryGetArrayElementType(targetPropertyName);
+            if (typedArrayType) {
+                assignmentFunction = deserializeArrayAssignment(typedArrayType);
+            }
         }
 
         assignmentFunction(target, targetPropertyName, sourceValue);
@@ -82,6 +85,13 @@ function deepCopyAssignment(target: Object, targetPropertyName: (string | symbol
 function deserializeAssignment(constructorFunction: new () => any) {
     return function(target: Object, targetPropertyName: (string | symbol), sourceValue: any) {
         var deserializedValue: any = deserialize(sourceValue, constructorFunction);
+        (<any>target)[targetPropertyName] = deserializedValue;
+    };
+}
+
+function deserializeArrayAssignment(constructorFunction: new () => any) {
+    return function(target: Object, targetPropertyName: (string | symbol), sourceValue: any) {
+        var deserializedValue: any = deserializeArray(sourceValue, constructorFunction);
         (<any>target)[targetPropertyName] = deserializedValue;
     };
 }
