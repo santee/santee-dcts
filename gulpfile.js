@@ -9,7 +9,6 @@ gulp.task('test', ['typescript'], function() {
         .pipe(mocha());
 });
 
-
 var tsProject = ts.createProject('./tsconfig.json');
 gulp.task('typescript', ['tslint'], function () {
     var tsResult = tsProject
