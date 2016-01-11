@@ -198,5 +198,6 @@ FakesAssemblies/
 .vscode/
 
 *.js
+*.d.ts
 
 typings/
