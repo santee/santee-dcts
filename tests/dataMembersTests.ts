@@ -1,7 +1,7 @@
 'use strict';
 
 import chai = require('chai');
-import {dataMember} from '../index';
+import {dataMember, deserialize} from '../index';
 import {dataMemberListMetadataKey, dataMemberMetadataKey} from '../src/dataMemberDecorator';
 
 var expect = chai.expect;
@@ -12,7 +12,7 @@ describe('@dataMember()', () => {
             @dataMember()
             public foo: string;
 
-            @dataMember({fieldName: 'bar2'})
+            @dataMember({ fieldName: 'bar2' })
             public bar: number;
 
             @dataMember()
@@ -39,7 +39,7 @@ describe('@dataMember()', () => {
 describe(`@dataMember({fieldName: 'fieldName'})`, () => {
     it(`creates '${dataMemberMetadataKey}' metadata with fieldName as a value`, () => {
         class A {
-            @dataMember({fieldName: 'bar'})
+            @dataMember({ fieldName: 'bar' })
             public foo: string;
         };
 
@@ -49,5 +49,26 @@ describe(`@dataMember({fieldName: 'fieldName'})`, () => {
 });
 
 
-describe(`PropertiesMapper`, () => {
+describe(`@dataMember({customDeserializer: fnc})`, () => {
+    it(`transforms input to output value`, () => {
+        class A {
+            @dataMember({ customDeserializer: (x) => new Date(x) })
+            public foo: Date;
+        }
+        var source = { foo: "01.01.2000" };
+
+        var result = deserialize(source, A);
+
+        expect(result.foo.valueOf()).to.equal(new Date(source.foo).valueOf());
+    });
+
+    it(`throws an error if types are not compatible`, () => {
+        class A {
+            @dataMember({ customDeserializer: (x) => "foo" })
+            public foo: number;
+        }
+        var source = { foo: 20 };
+
+        expect(() => deserialize(source, A)).to.throw();
+    });
 });
