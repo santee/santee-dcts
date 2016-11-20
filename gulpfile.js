@@ -3,6 +3,16 @@ var mocha = require('gulp-mocha');
 var ts = require('gulp-typescript');
 var tslint = require("gulp-tslint");
 var merge = require('merge2');
+var del = require('del');
+
+gulp.task('clean', function() {
+    return del([
+        'src/**/*.js',
+        'src/**/*.d.ts',
+        'tests/**/*.js',
+        'tests/**/*.d.ts',
+    ]);
+})
 
 gulp.task('test', ['typescript'], function() {
 	return gulp.src('tests/**/*.js', {read: false})
@@ -10,7 +20,7 @@ gulp.task('test', ['typescript'], function() {
 });
 
 var tsProject = ts.createProject('./tsconfig.json');
-gulp.task('typescript', ['tslint'], function () {
+gulp.task('typescript', ['tslint', 'clean'], function () {
     var tsResult = tsProject
         .src()
         .pipe(ts(tsProject)); 

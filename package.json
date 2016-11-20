@@ -30,7 +30,8 @@
     "mocha": "^2.3.4",
     "tsd": "^0.6.5",
     "tslint": "^3.2.1",
-    "typescript": "^1.7.5"
+    "typescript": "^1.7.5",
+    "del": "2.2.2"
   },
   "typescript": {
     "definition": "index.d.ts"
