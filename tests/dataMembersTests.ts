@@ -12,7 +12,7 @@ describe('@dataMember()', () => {
             @dataMember()
             public foo: string;
 
-            @dataMember('bar2')
+            @dataMember({fieldName: 'bar2'})
             public bar: number;
 
             @dataMember()
@@ -36,10 +36,10 @@ describe('@dataMember()', () => {
 });
 
 
-describe(`@dataMember('fieldName')`, () => {
+describe(`@dataMember({fieldName: 'fieldName'})`, () => {
     it(`creates '${dataMemberMetadataKey}' metadata with fieldName as a value`, () => {
         class A {
-            @dataMember('bar')
+            @dataMember({fieldName: 'bar'})
             public foo: string;
         };
 

@@ -1,7 +1,7 @@
 'use strict';
 
 import {RequiredMetadataConstraint} from './requiredDecorator';
-import {TypeSafetyConstraint} from './typesSafety';
+import {TypeSafetyConstraint} from './typesSafetyConstraint';
 
 import {isPrimitiveTypeConstructor} from './common';
 import {MetadataAccessor} from './metadataAccessor';

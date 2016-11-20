@@ -30,7 +30,7 @@ describe("deserialize(obj, constructorFunction)", () => {
             @dataMember()
             public bar: number;
 
-            @dataMember("goo")
+            @dataMember({fieldName: "goo"})
             public trueValue: boolean;
 
             @dataMember()
@@ -289,7 +289,7 @@ describe("deserialize(obj, MyClass) with no design-time metadata", () => {
             @dataMember()
             public bar: number;
 
-            @dataMember("goo")
+            @dataMember({fieldName: "goo"})
             public trueValue: boolean;
 
             @dataMember()

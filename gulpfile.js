@@ -20,7 +20,7 @@ gulp.task('test', ['typescript'], function() {
 });
 
 var tsProject = ts.createProject('./tsconfig.json');
-gulp.task('typescript', ['tslint', 'clean'], function () {
+gulp.task('typescript', ['tslint'], function () {
     var tsResult = tsProject
         .src()
         .pipe(ts(tsProject)); 
@@ -31,7 +31,7 @@ gulp.task('typescript', ['tslint', 'clean'], function () {
         ];
 });
 
-gulp.task('tslint', function() {
+gulp.task('tslint', ['clean'], function() {
     return gulp.src(["src/**.ts", "tests/**.ts", "index.ts"])
         .pipe(tslint())
         .pipe(tslint.report("verbose"))
