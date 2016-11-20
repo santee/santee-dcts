@@ -1,7 +1,7 @@
 'use strict';
 
 import chai = require('chai');
-import {deserialize, dataMember, deserializeArray} from '../index';
+import {deserialize, dataMember, deserializeArray, anyArray} from '../index';
 
 var expect = chai.expect;
 
@@ -195,22 +195,14 @@ describe("deserialize(obj, constructorFunction)", () => {
         expect(result.obj).is.deep.equal(source.obj);
     });
 
-    it("deserializes arrays by deep clonning it", () => {
+    it("throws an error if array is found without @anyArray or @typedArray", () => {
         class A {
             @dataMember()
             public objArray: any[];
-
-            @dataMember()
-            public numbersArray: number[];
         };
 
-        var source = { objArray: ["aa", {}, 30], numbersArray: [20, 30, 40] };
-        var result = deserialize(source, A);
-
-        expect(result.objArray).not.equal(source.objArray);
-        expect(result.objArray).is.deep.equal(source.objArray);
-        expect(result.numbersArray).not.equal(source.numbersArray);
-        expect(result.numbersArray).is.deep.equal(source.numbersArray);
+        var source = { objArray: ["aa", {}, 30]};
+        expect(() => deserialize(source, A)).to.throw();
     });
 
     it("throws error if object passed for array field", () => {
@@ -368,6 +360,7 @@ describe("deserialize(obj, MyClass) with no design-time metadata", () => {
     it("deep copies arrays", () => {
         class A {
             @dataMember()
+            @anyArray()
             public foo: number[];
         }
 

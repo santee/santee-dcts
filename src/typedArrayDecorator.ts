@@ -1,8 +1,9 @@
 'use strict';
 
 import {isPrimitiveTypeConstructor} from './common';
+import {anyArrayElementTypeMetadataKey} from './anyArrayDecorator';
 
-export var typedArrayElementTypeMetadataKey = 'sas:validation:typedArrayType';
+export const typedArrayElementTypeMetadataKey = 'sas:validation:typedArrayType';
 
 export function typedArrayDecorator(type: new() => Object): PropertyDecorator {
     return function(target: Object, propertyKey: (string|symbol)){
@@ -12,6 +13,7 @@ export function typedArrayDecorator(type: new() => Object): PropertyDecorator {
         }
  
         if (isPrimitiveTypeConstructor(type) || type === Object) {
+            Reflect.defineMetadata(anyArrayElementTypeMetadataKey, true, target, propertyKey);
             return;
         }
 

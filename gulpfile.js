@@ -14,7 +14,7 @@ gulp.task('clean', function() {
     ]);
 })
 
-gulp.task('test', ['typescript'], function() {
+gulp.task('test', function() {
 	return gulp.src('tests/**/*.js', {read: false})
         .pipe(mocha());
 });

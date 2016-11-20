@@ -1,5 +1,6 @@
 import {dataMemberMetadataKey, dataMemberListMetadataKey, dataMemberCustomDeserializerMetadataKey} from './dataMemberDecorator';
 import {typedArrayElementTypeMetadataKey} from './typedArrayDecorator';
+import {anyArrayElementTypeMetadataKey} from './anyArrayDecorator';
 
 export class MetadataAccessor<T extends Object> {
     constructor(private target: T) {
@@ -26,7 +27,15 @@ export class MetadataAccessor<T extends Object> {
     }
     
     tryGetArrayElementType(targetPropertyName: (string | symbol)) {
-        //TODO throw an exception
-        return Reflect.getMetadata(typedArrayElementTypeMetadataKey, this.objectPrototype, targetPropertyName) || null;
+        const arrayType = Reflect.getMetadata(typedArrayElementTypeMetadataKey, this.objectPrototype, targetPropertyName);
+        if (arrayType) {
+            return arrayType;
+        }
+
+        if (Reflect.getMetadata(anyArrayElementTypeMetadataKey, this.objectPrototype, targetPropertyName)) {
+            return null;
+        }
+
+        throw new Error(`Array found for '${targetPropertyName}' field with no type declared. Use @anyArray or @typedArray decorators.`);
     }
 }

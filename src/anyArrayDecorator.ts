@@ -1,4 +1,4 @@
-export var anyArrayElementTypeMetadataKey = 'sas:validation:anyArrayType';
+export const anyArrayElementTypeMetadataKey = 'sas:validation:anyArrayType';
 
 export function anyArrayDecorator(): PropertyDecorator {
     return function(target: Object, propertyKey: (string|symbol)){
