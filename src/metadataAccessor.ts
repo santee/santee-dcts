@@ -1,4 +1,4 @@
-import {dataMemberMetadataKey, dataMemberListMetadataKey} from './dataMemberDecorator';
+import {dataMemberMetadataKey, dataMemberListMetadataKey, dataMemberCustomDeserializerMetadataKey} from './dataMemberDecorator';
 import {typedArrayElementTypeMetadataKey} from './typedArrayDecorator';
 
 export class MetadataAccessor<T extends Object> {
@@ -20,8 +20,13 @@ export class MetadataAccessor<T extends Object> {
     getPropertyType(targetPropertyName: (string | symbol)) {
         return Reflect.getMetadata("design:type", this.objectPrototype, targetPropertyName);
     }
+
+    tryGetCustomDeserializer(targetPropertyName: (string | symbol)) {
+        return Reflect.getMetadata(dataMemberCustomDeserializerMetadataKey, this.objectPrototype, targetPropertyName) || null;
+    }
     
     tryGetArrayElementType(targetPropertyName: (string | symbol)) {
+        //TODO throw an exception
         return Reflect.getMetadata(typedArrayElementTypeMetadataKey, this.objectPrototype, targetPropertyName) || null;
     }
 }
