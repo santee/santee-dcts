@@ -95,4 +95,23 @@ describe("@required({nullable: true})", () => {
         var result = deserialize(source, A);
         expect(result.foo).to.be.null;
     });
+
+
+    it(`does not attempt to deserialize field object which is marked as nullable`, () => {
+        class B {
+            @dataMember()
+            public bar: string;
+        }
+
+        class A {
+            @dataMember()
+            @required({nullable: true})
+            public foo: B;
+        }
+
+        var source = { foo: <any>null };
+
+        var result = deserialize(source, A);
+        expect(result.foo).to.be.null;
+    });
 });

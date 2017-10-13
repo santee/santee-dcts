@@ -11,6 +11,10 @@ export function deserialize<T extends Object>(source: Object, constructorFunctio
         throw new Error("constructorFunction must be specified");
     }
 
+    if (source === null) {
+        throw new Error("source object cannot be null");
+    }
+
     if (source instanceof Object) {
         var target = new constructorFunction();
 
@@ -99,7 +103,7 @@ function deepCopyAssignment(target: Object, targetPropertyName: (string | symbol
 
 function deserializeAssignment(constructorFunction: new () => any): assignmentFunction {
     return function (target: Object, targetPropertyName: (string | symbol), sourceValue: any) {
-        var deserializedValue: any = deserialize(sourceValue, constructorFunction);
+        var deserializedValue: any = sourceValue === null ? null : deserialize(sourceValue, constructorFunction);
         (<any>target)[targetPropertyName] = deserializedValue;
     };
 }

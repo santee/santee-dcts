@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prepublish": "tsd reinstall && tsd link && gulp typescript",
+    "build": "gulp typescript",
     "test": "gulp test"
   },
   "repository": {
