@@ -36,6 +36,6 @@ export class MetadataAccessor<T extends Object> {
             return null;
         }
 
-        throw new Error(`Array found for '${targetPropertyName}' field with no type declared. Use @anyArray or @typedArray decorators.`);
+        throw new Error(`Array found for '${targetPropertyName.toString()}' field with no type declared. Use @anyArray or @typedArray decorators.`);
     }
 }

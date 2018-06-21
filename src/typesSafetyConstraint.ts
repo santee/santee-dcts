@@ -49,7 +49,7 @@ export class TypeSafetyConstraint implements Constraint {
 
     private formatAnyTypeWarningMessage(sourceValue: any, targetPropertyName: (string | symbol)) {
         var warningMessage = `Deserialization: Primitive type '${sourceValue}'' passed to ` +
-            `the object for the property '${targetPropertyName}'. ` +
+            `the object for the property '${targetPropertyName.toString()}'. ` +
             `It is impossible to determine whether object type is 'any'` +
             ` or 'Object' or 'interface'. Try to avoid 'any' types`;
 
