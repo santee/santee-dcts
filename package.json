@@ -1,6 +1,6 @@
 {
   "name": "santee-dcts",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "DataContractSerializer for TypeScript. (any -> Class)",
   "main": "index.js",
   "scripts": {
