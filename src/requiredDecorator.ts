@@ -33,7 +33,7 @@ export class RequiredMetadataConstraint implements Constraint {
         }
 
         if (sourceValue === undefined || (sourceValue === null && decoratorParams.nullable !== true)) {
-            throw new Error(`${this.propertyName} is required`);
+            throw new Error(`${this.propertyName.toString()} is required`);
         }
     }
 }
