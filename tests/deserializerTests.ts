@@ -74,14 +74,24 @@ describe("deserialize(obj, constructorFunction)", () => {
     });
 
     it("assigns undefined if property does not exist and no @required decorator specified", () => {
+        class B {
+            @dataMember()
+            public baz: string;
+        };
+
         class A {
             @dataMember()
             public foo: string;
+
+            @dataMember()
+            public b: B;
         };
 
         var source = { bar: 5 };
 
-        expect(deserialize(source, A).foo).to.be.undefined;
+        var result = deserialize(source, A);
+        expect(result.foo).to.be.undefined;
+        expect(result.b).to.be.undefined;
     });
 
     it("allows nulls to be assigned to primitive types", () => {
