@@ -103,7 +103,7 @@ function deepCopyAssignment(target: Object, targetPropertyName: (string | symbol
 
 function deserializeAssignment(constructorFunction: new () => any): assignmentFunction {
     return function (target: Object, targetPropertyName: (string | symbol), sourceValue: any) {
-        var deserializedValue: any = sourceValue === null ? null : deserialize(sourceValue, constructorFunction);
+        var deserializedValue: any = sourceValue == null ? sourceValue : deserialize(sourceValue, constructorFunction);
         (<any>target)[targetPropertyName] = deserializedValue;
     };
 }
