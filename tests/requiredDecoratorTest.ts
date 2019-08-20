@@ -43,7 +43,7 @@ describe("@required()", () => {
     }
     );
 
-    it(`makes deserialize() function to fail if source value is undefined`, () => {
+    it(`makes deserialize() function to fail if source value (primitive) is undefined`, () => {
         class A {
             @dataMember()
             @required()
@@ -55,6 +55,22 @@ describe("@required()", () => {
         expect(() => deserialize(source, A)).to.throw(Error);
     });
 
+    it(`makes deserialize() function to fail if source value (object) is undefined`, () => {
+        class B {
+            @dataMember()
+            public foo: string;
+        }
+
+        class A {
+            @dataMember()
+            @required()
+            public b: B;
+        }
+        
+        var source = { bar: "test" };
+        
+        expect(() => deserialize(source, A)).to.throw(Error);
+    });
 
     it(`makes deserialize() function to fail if source value is null`, () => {
         class A {
