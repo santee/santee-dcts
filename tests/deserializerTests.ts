@@ -11,15 +11,15 @@ describe("deserialize(obj, constructorFunction)", () => {
     });
 
     it("throws exception if object passed is null", () => {
-        expect(() => deserialize(null, Object)).to.throw(Error);
+        expect(() => deserialize(null!, Object)).to.throw(Error);
     });
 
     it("throws exception if constructor function passed is null", () => {
-        expect(() => deserialize({}, null)).to.throw(Error);
+        expect(() => deserialize({}, null!)).to.throw(Error);
     });
 
     it("throws exception if constructor function passed is undefined", () => {
-        expect(() => deserialize({}, undefined)).to.throw(Error);
+        expect(() => deserialize({}, undefined!)).to.throw(Error);
     });
 
     it("assigns primitive values from sourceObject", () => {
@@ -35,9 +35,12 @@ describe("deserialize(obj, constructorFunction)", () => {
 
             @dataMember()
             public falseValue: boolean;
+
+            @dataMember({ fieldType: String })
+            public typedField: string | null;
         };
 
-        var source = { foo: "test", bar: 5, goo: true, falseValue: false };
+        var source = { foo: "test", bar: 5, goo: true, falseValue: false, typedField: "abc" };
 
         var result = deserialize(source, A);
 
@@ -45,12 +48,24 @@ describe("deserialize(obj, constructorFunction)", () => {
         expect(result.bar).to.equal(5);
         expect(result.trueValue).to.be.true;
         expect(result.falseValue).to.be.false;
+        expect(result.typedField).to.equal("abc");
     });
 
     it("throws exception if primitive type is not the same as in target object", () => {
         class A {
             @dataMember()
             public foo: string;
+        };
+
+        var source = { foo: 5 };
+
+        expect(() => deserialize(source, A)).to.throw(Error);
+    });
+
+    it("throws exception if primitive type is not the same as in fieldType", () => {
+        class A {
+            @dataMember({ fieldType: String })
+            public foo: string | null;
         };
 
         var source = { foo: 5 };
@@ -66,6 +81,20 @@ describe("deserialize(obj, constructorFunction)", () => {
         class A {
             @dataMember()
             public foo: B;
+        };
+
+        var source = { foo: 5 };
+
+        expect(() => deserialize(source, A)).to.throw(Error);
+    });
+
+    it("throws exception if primitive type passed while fieldType is constructor function", () => {
+        class B {
+        }
+
+        class A {
+            @dataMember({ fieldType: B })
+            public foo: B | null;
         };
 
         var source = { foo: 5 };

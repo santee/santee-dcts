@@ -3,6 +3,7 @@
 export const dataMemberListMetadataKey = 'sas:validation:data-member-list';
 export const dataMemberMetadataKey = 'sas:validation:data-member';
 export const dataMemberCustomDeserializerMetadataKey = 'sas:validation:custom-deserializer';
+export const dataMemberFieldTypeMetadataKey = 'sas:validation:field-type';
 
 export function dataMemberDecorator(params?: DataMemberDecoratorParams) : PropertyDecorator {
     return (target, propertyKey) => {
@@ -18,6 +19,10 @@ export function dataMemberDecorator(params?: DataMemberDecoratorParams) : Proper
             metadataValue = params.fieldName;
         }
 
+        if (params && params.fieldType) {
+            Reflect.defineMetadata(dataMemberFieldTypeMetadataKey, params.fieldType, target, propertyKey);
+        }
+
         Reflect.defineMetadata(dataMemberMetadataKey, metadataValue, target, propertyKey);
 
         if (params && params.customDeserializer) {
@@ -28,5 +33,6 @@ export function dataMemberDecorator(params?: DataMemberDecoratorParams) : Proper
 
 export interface DataMemberDecoratorParams {
     fieldName?: string;
+    fieldType?: new (...args: any[]) => any;
     customDeserializer?: ( (value: any) => any);
 }
