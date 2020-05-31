@@ -51,7 +51,8 @@ export class TypeSafetyConstraint implements Constraint {
         var warningMessage = `Deserialization: Primitive type '${sourceValue}'' passed to ` +
             `the object for the property '${targetPropertyName.toString()}'. ` +
             `It is impossible to determine whether object type is 'any'` +
-            ` or 'Object' or 'interface'. Try to avoid 'any' types`;
+            ` or 'Object' or 'interface'. Try to avoid 'any' types` +
+            ` or provide dataMember.fieldType`;
 
         return warningMessage;
     }

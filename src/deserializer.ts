@@ -4,7 +4,7 @@ import {RequiredMetadataConstraint} from './requiredDecorator';
 import {TypeSafetyConstraint} from './typesSafetyConstraint';
 
 import {isPrimitiveTypeConstructor} from './common';
-import {MetadataAccessor} from './metadataAccessor';
+import { MetadataAccessor } from './metadataAccessor';
 
 export function deserialize<T extends Object>(source: Object, constructorFunction: new () => T) {
     if (!constructorFunction) {
@@ -45,7 +45,11 @@ export function assignPropertyValues<T extends Object>(source: Object, target: T
     var allProperties = metadataAccessor.getAllProperties();
     for (const targetPropertyName of allProperties) {
 
-        const targetType = metadataAccessor.getPropertyType(targetPropertyName);
+        const fieldType = metadataAccessor.tryGetFieldTypeProperty(targetPropertyName);
+        const targetType = fieldType
+            ? fieldType
+            : metadataAccessor.getPropertyType(targetPropertyName);
+
         const constraints = [new RequiredMetadataConstraint(target, targetPropertyName), new TypeSafetyConstraint(targetPropertyName, targetType)];
 
         const sourcePropertyName = metadataAccessor.getSourcePropertyName(targetPropertyName);

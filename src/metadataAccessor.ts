@@ -1,4 +1,4 @@
-import {dataMemberMetadataKey, dataMemberListMetadataKey, dataMemberCustomDeserializerMetadataKey} from './dataMemberDecorator';
+import { dataMemberMetadataKey, dataMemberListMetadataKey, dataMemberCustomDeserializerMetadataKey, dataMemberFieldTypeMetadataKey } from './dataMemberDecorator';
 import {typedArrayElementTypeMetadataKey} from './typedArrayDecorator';
 import {anyArrayElementTypeMetadataKey} from './anyArrayDecorator';
 
@@ -37,5 +37,9 @@ export class MetadataAccessor<T extends Object> {
         }
 
         throw new Error(`Array found for '${targetPropertyName.toString()}' field with no type declared. Use @anyArray or @typedArray decorators.`);
+    }
+
+    tryGetFieldTypeProperty(targetPropertyName: (string | symbol)) {
+        return Reflect.getMetadata(dataMemberFieldTypeMetadataKey, this.objectPrototype, targetPropertyName) || null;
     }
 }

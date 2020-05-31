@@ -2,7 +2,7 @@
 
 import chai = require('chai');
 import {dataMember, deserialize} from '../index';
-import {dataMemberListMetadataKey, dataMemberMetadataKey} from '../src/dataMemberDecorator';
+import { dataMemberListMetadataKey, dataMemberMetadataKey, dataMemberFieldTypeMetadataKey } from '../src/dataMemberDecorator';
 
 var expect = chai.expect;
 
@@ -70,5 +70,17 @@ describe(`@dataMember({customDeserializer: fnc})`, () => {
         var source = { foo: 20 };
 
         expect(() => deserialize(source, A)).to.throw();
+    });
+});
+
+describe(`@dataMember({fieldType: Ctor})`, () => {
+    it(`creates ${dataMemberFieldTypeMetadataKey} to output value`, () => {
+        class A {
+            @dataMember({ fieldType: String })
+            public foo: string | null;
+        }
+
+        var metadata = Reflect.getMetadata(dataMemberFieldTypeMetadataKey, A.prototype, "foo");
+        expect(metadata).to.be.equal(String);
     });
 });
