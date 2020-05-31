@@ -4,7 +4,7 @@
   "description": "DataContractSerializer for TypeScript. (any -> Class)",
   "main": "index.js",
   "scripts": {
-    "prepublish": "tsd reinstall && tsd link && gulp typescript",
+    "prepublish": "gulp typescript",
     "build": "gulp typescript",
     "test": "gulp test"
   },
@@ -22,17 +22,19 @@
     "reflect-metadata": "^0.1.2"
   },
   "devDependencies": {
+    "@types/chai": "^3.4.35",
+    "@types/mocha": "^2.2.48",
     "chai": "^3.4.1",
-    "gulp": "^3.9.0",
+    "del": "2.2.2",
+    "gulp": "^4.0.1",
     "gulp-mocha": "^2.2.0",
     "gulp-tslint": "^4.2.2",
-    "gulp-typescript": "^2.10.0",
+    "gulp-typescript": "^5.0.1",
     "merge2": "^0.3.6",
     "mocha": "^2.3.4",
     "tsd": "^0.6.5",
     "tslint": "^3.2.1",
-    "typescript": "^1.7.5",
-    "del": "2.2.2"
+    "typescript": "^3.9.3"
   },
   "typescript": {
     "definition": "index.d.ts"

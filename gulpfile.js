@@ -19,24 +19,24 @@ gulp.task('test', function() {
         .pipe(mocha());
 });
 
-var tsProject = ts.createProject('./tsconfig.json');
-gulp.task('typescript', ['tslint'], function () {
-    var tsResult = tsProject
-        .src()
-        .pipe(ts(tsProject)); 
-
-    return [
-        tsResult.js.pipe(gulp.dest('.')),
-        tsResult.dts.pipe(gulp.dest('.'))
-        ];
-});
-
-gulp.task('tslint', ['clean'], function() {
+gulp.task('tslint', gulp.series('clean', function() {
     return gulp.src(["src/**.ts", "tests/**.ts", "index.ts"])
         .pipe(tslint())
         .pipe(tslint.report("verbose"))
-});
+}));
 
-gulp.task('watch', ['typescript'], function() {
-    return gulp.watch('**/*.ts', ['typescript']);
-});
+var tsProject = ts.createProject('./tsconfig.json');
+gulp.task('typescript', gulp.series('tslint', function () {
+    var tsResult = tsProject
+        .src()
+        .pipe(tsProject());
+
+    return merge([
+        tsResult.js.pipe(gulp.dest('.')),
+        tsResult.dts.pipe(gulp.dest('.'))
+    ]);
+}));
+
+gulp.task('watch', gulp.series('typescript', function() {
+    return gulp.watch('**/*.ts', gulp.series('typescript'));
+}));

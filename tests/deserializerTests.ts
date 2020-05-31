@@ -11,15 +11,15 @@ describe("deserialize(obj, constructorFunction)", () => {
     });
 
     it("throws exception if object passed is null", () => {
-        expect(() => deserialize(null, Object)).to.throw(Error);
+        expect(() => deserialize(null!, Object)).to.throw(Error);
     });
 
     it("throws exception if constructor function passed is null", () => {
-        expect(() => deserialize({}, null)).to.throw(Error);
+        expect(() => deserialize({}, null!)).to.throw(Error);
     });
 
     it("throws exception if constructor function passed is undefined", () => {
-        expect(() => deserialize({}, undefined)).to.throw(Error);
+        expect(() => deserialize({}, undefined!)).to.throw(Error);
     });
 
     it("assigns primitive values from sourceObject", () => {
