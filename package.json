@@ -23,13 +23,13 @@
   },
   "devDependencies": {
     "chai": "^3.4.1",
-    "gulp": "^3.9.0",
-    "gulp-mocha": "^2.2.0",
+    "gulp": "^4.0.2",
+    "gulp-mocha": "^8.0.0",
     "gulp-tslint": "^4.2.2",
     "gulp-typescript": "^2.10.0",
     "merge2": "^0.3.6",
-    "mocha": "^2.3.4",
-    "tsd": "^0.6.5",
+    "mocha": "^10.1.0",
+    "tsd": "^0.24.1",
     "tslint": "^3.2.1",
     "typescript": "^1.7.5",
     "del": "2.2.2"
